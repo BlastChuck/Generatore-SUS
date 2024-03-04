@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Number Generator</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="text-center">
+            <h1 class="mb-4">Random Number Generator</h1>
+            <button id="generateButton" class="btn btn-primary mb-3">Generate Random Number</button>
+            <p id="randomNumber" class="mb-0"></p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.getElementById('generateButton').addEventListener('click', function() {
+            fetch('http://77.32.113.106/api/loadDefaults')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(defaults => {
+                    const min = defaults.min;
+                    const max = defaults.max;
+                    const exclude = defaults.exclude;
+
+                    fetch('http://77.32.113.106/api/random?min=' + min + '&max=' + max + '&exclude=' + exclude)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.text();
+                        })
+                        .then(randomNumber => {
+                            document.getElementById('randomNumber').textContent = 'Random Number: ' + randomNumber;
+                        })
+                        .catch(error => {
+                            console.error('There was a problem with the fetch operation:', error);
+                        });
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        });
+    </script>
+</body>
+</html>
